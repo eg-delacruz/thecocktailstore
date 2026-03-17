@@ -103,12 +103,34 @@ export class PaymentUI {
     submitButton.innerHTML =
       '<i class="fas fa-spinner fa-spin"></i> Procesando...';
 
+    // Google Analytics event
+     const paymentMethod = checkoutService.paymentInfo.method;
+     const shippingMethod = checkoutService.shippingMethod;
+
+     const items = cartService.getItems().map((item) => ({
+       id: item.id,
+       name: item.name,
+       category: item.category,
+       price: item.price,
+       quantity: item.quantity,
+     }));
+
+     window.dataLayer = window.dataLayer || [];
+     window.dataLayer.push({
+       event: "purchase",
+       ecommerce: {
+         items,
+         shipping_tier: shippingMethod,
+         payment_method: paymentMethod,
+       },
+     });
+
     setTimeout(() => {
       checkoutService
         .placeOrder()
         .then((orderDetails) => {
           console.log("Order details before redirect:", orderDetails);
-          window.location.href = `/thecocktailstore/confirmation.html?order=${orderDetails.orderNumber}`;
+          window.location.href = `/confirmation.html?order=${orderDetails.orderNumber}`;
         })
         .catch((error) => {
           alert("Error al procesar el pago: " + error.message);

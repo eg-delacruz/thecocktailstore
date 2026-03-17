@@ -33,7 +33,25 @@ export class CheckoutUI {
       checkoutService.saveShippingInfo(shippingInfo);
       checkoutService.setShippingMethod(shippingMethod);
 
-      window.location.href ="/thecocktailstore/payment.html";
+      // Google Analytics
+      const cart = cartService.getItems();
+      const items = cart.map((item) => ({
+        item_id: item.id,
+        item_name: item.name,
+        item_category: item.category,
+        price: item.price,
+        quantity: item.quantity,
+      }));
+
+      dataLayer.push({
+        event: "begin_checkout",
+        ecommerce: {
+          items: items,
+          shipping_tier: shippingMethod,
+        },
+      });
+
+      window.location.href ="/payment.html";
     });
   }
 

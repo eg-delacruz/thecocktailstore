@@ -116,6 +116,13 @@ button {
     background-color: var(--secondary-color);
 }
 
+.button--disabled,
+.button[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 /* Header */
 .header {
     position: fixed;

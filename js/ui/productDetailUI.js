@@ -94,6 +94,22 @@ export class ProductDetailUI {
       this.addToCartBtn.textContent = "¡Añadido!";
       this.addToCartBtn.disabled = true;
 
+      // Google Analytics
+      const items = [{
+        'item_id': this.product.id,
+        'item_name': this.product.name,
+        'item_category': this.product.category,
+        'price': this.product.price,
+        'quantity': this.quantity
+      }];
+
+      dataLayer.push({
+        'event': 'add_to_cart',
+        'ecommerce': {
+          'items': items
+        }
+      });
+
       setTimeout(() => {
         this.addToCartBtn.textContent = originalText;
         this.addToCartBtn.disabled = false;

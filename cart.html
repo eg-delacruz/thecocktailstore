@@ -273,8 +273,10 @@
               <a
                 href="checkout.html"
                 class="button button--primary checkout-button"
+                id="checkout-button"
+                data-checkout-trigger
               >
-                Proceder al Checkout
+                Proceder al Pago
               </a>
 
               <a href="/thecocktailstore" class="continue-shopping"> Continuar Comprando </a>
@@ -305,8 +307,8 @@
             <span class="cart-modal__total-amount">$0.00</span>
           </div>
           <a href="cart.html" class="button button--secondary">Ver Carrito</a>
-          <a href="checkout.html" class="button button--primary"
-            >Proceder al Pago</a
+          <a href="checkout.html" class="button button--primary" id="cart-checkout-button" data-checkout-trigger>
+            Proceder al Pago</a
           >
         </div>
       </div>

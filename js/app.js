@@ -118,5 +118,24 @@ setSecondButton() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-window.app = new App();
+const app = new App();
+window.app = app;
+
+// Google Analytics
+const productsContainer = document.getElementsByClassName("products__grid")[0];
+if (productsContainer) {
+  const items = app.productsUI.products.map(product => ({
+    'item_id': product.id,
+    'item_name': product.name,
+    'item_category': product.category,
+    'price': product.price,
+    quantity: 1
+  }));
+  dataLayer.push({
+    'event': 'view_item_list',
+    'ecommerce': {
+      'items': items
+    }
+  });
+}
 });

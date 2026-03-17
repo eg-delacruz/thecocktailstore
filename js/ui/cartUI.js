@@ -8,10 +8,12 @@ export class CartUI {
     this.cartCount = document.querySelector(".nav__cart-count");
     this.cartIcon = document.querySelector(".nav__cart");
     this.closeButton = document.querySelector(".cart-modal__close");
+    this.checkoutTriggers = document.querySelectorAll("[data-checkout-trigger]");
 
     this.toggleCart = this.toggleCart.bind(this);
     this.updateCartUI = this.updateCartUI.bind(this);
     this.handleClickOutside = this.handleClickOutside.bind(this);
+    this.handleCheckoutClick = this.handleCheckoutClick.bind(this);
 
     this.setupEventListeners();
 
@@ -22,6 +24,9 @@ export class CartUI {
     this.cartIcon.addEventListener("click", this.toggleCart);
     this.closeButton.addEventListener("click", this.toggleCart);
     document.addEventListener("click", this.handleClickOutside);
+    this.checkoutTriggers.forEach((trigger) => {
+      trigger.addEventListener("click", this.handleCheckoutClick);
+    });
 
     this.cartItems.addEventListener("click", (e) => {
       const button = e.target.closest("button");
@@ -51,6 +56,33 @@ export class CartUI {
     this.cartModal.classList.toggle("show");
   }
 
+  handleCheckoutClick(e) {
+    const cart = cartService.getItems();
+    if (!cart.length) {
+      e.preventDefault();
+      return;
+    }
+
+    const items = this.getCheckoutItems(cart);
+    this.pushBeginCheckoutEvent(items);
+
+    if (
+      e.metaKey ||
+      e.ctrlKey ||
+      e.shiftKey ||
+      e.altKey ||
+      e.button !== 0
+    ) {
+      return;
+    }
+
+    const checkoutUrl = e.currentTarget.getAttribute("href");
+
+    e.preventDefault();
+
+    window.location.href = checkoutUrl;
+  }
+
   handleClickOutside(e) {
     if (
       this.cartModal.classList.contains("show") &&
@@ -59,6 +91,41 @@ export class CartUI {
     ) {
       this.toggleCart();
     }
+  }
+
+  getCheckoutItems(cart) {
+    return cart.map((item) => ({
+      item_id: item.id,
+      item_name: item.name,
+      item_category: item.category,
+      price: item.price,
+      quantity: item.quantity,
+    }));
+  }
+
+  pushBeginCheckoutEvent(items) {
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: "begin_checkout",
+      ecommerce: {
+        items,
+      },
+    });
+  }
+
+  updateCheckoutTriggersState(cart) {
+    const isDisabled = cart.length === 0;
+
+    this.checkoutTriggers.forEach((trigger) => {
+      trigger.classList.toggle("button--disabled", isDisabled);
+      trigger.setAttribute("aria-disabled", String(isDisabled));
+
+      if (isDisabled) {
+        trigger.setAttribute("tabindex", "-1");
+      } else {
+        trigger.removeAttribute("tabindex");
+      }
+    });
   }
 
   updateCartUI(cart) {
@@ -90,6 +157,7 @@ export class CartUI {
       .join("");
 
     this.cartTotal.textContent = `$${cartService.getTotal().toFixed(2)}`;
+    this.updateCheckoutTriggersState(cart);
 
     if (!document.getElementById("cartStyles")) {
       const styles = document.createElement("style");

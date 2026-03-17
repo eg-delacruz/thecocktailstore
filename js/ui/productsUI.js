@@ -29,12 +29,53 @@ export class ProductsUI {
     this.searchInput.addEventListener("input", this.handleSearch);
 
     this.productsGrid.addEventListener("click", (e) => {
+      const detailsButton = e.target.closest(".button--secondary");
+      if (detailsButton) {
+        const productId = parseInt(detailsButton.closest(".product__card").querySelector(".product__button").dataset.id);
+        const product = this.products.find((p) => p.id === productId);
+        if (product) {
+          // Google Analytics
+          const items = [{
+            'item_id': product.id,
+            'item_name': product.name,
+            'item_category': product.category,
+            'price': product.price
+          }];
+
+          dataLayer.push({
+            'event': 'select_item',
+            'ecommerce': {
+              'items': items
+            }
+          });
+        }
+      }
+    });
+
+    this.productsGrid.addEventListener("click", (e) => {
       const addButton = e.target.closest(".product__button");
       if (addButton) {
         const productId = parseInt(addButton.dataset.id);
         const product = this.products.find((p) => p.id === productId);
         if (product) {
           this.handleAddToCart(product);
+
+          // Google Analytics
+          const items = [{
+            'item_id': product.id,
+            'item_name': product.name,
+            'item_category': product.category,
+            'price': product.price,
+            'quantity': 1,
+            // item_brand not available in the products data
+          }];
+
+          dataLayer.push({
+            'event': 'add_to_cart',
+            'ecommerce': {
+              'items': items
+            }
+          });
         }
       }
     });

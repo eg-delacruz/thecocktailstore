@@ -6,7 +6,6 @@ export class CartPageUI {
     this.cartEmpty = document.querySelector(".cart-empty");
     this.subtotalElement = document.querySelector(".cart-subtotal");
     this.totalElement = document.querySelector(".cart-total");
-    this.checkoutButton = document.querySelector(".checkout-button");
 
     this.setupEventListeners();
 
@@ -53,12 +52,8 @@ export class CartPageUI {
     if (cart.length === 0) {
       this.cartEmpty.style.display = "block";
       this.cartItems.innerHTML = "";
-      this.checkoutButton.disabled = true;
-      this.checkoutButton.classList.add("disabled");
     } else {
       this.cartEmpty.style.display = "none";
-      this.checkoutButton.disabled = false;
-      this.checkoutButton.classList.remove("disabled");
 
       this.cartItems.innerHTML = cart
         .map(
