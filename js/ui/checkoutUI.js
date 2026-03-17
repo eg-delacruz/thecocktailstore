@@ -51,7 +51,7 @@ export class CheckoutUI {
         },
       });
 
-      window.location.href ="/payment.html";
+      window.location.href ="/thecocktailstore/payment.html";
     });
   }
 
