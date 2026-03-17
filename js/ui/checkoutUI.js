@@ -33,21 +33,29 @@ export class CheckoutUI {
       checkoutService.saveShippingInfo(shippingInfo);
       checkoutService.setShippingMethod(shippingMethod);
 
-      // Google Analytics
-      const cart = cartService.getItems();
-      const items = cart.map((item) => ({
+      // Google Analytics (add_shipping_info event)
+      const items = cartService.getItems().map((item) => ({
         item_id: item.id,
         item_name: item.name,
         item_category: item.category,
-        price: item.price,
         quantity: item.quantity,
+        price: item.price,
       }));
 
-      dataLayer.push({
-        event: "begin_checkout",
+      const subtotal = cartService.getTotal();
+      const shipping = checkoutService.getShippingCost();
+      const tax = checkoutService.getTaxAmount();
+      const value = subtotal + shipping + tax;
+
+      window.dataLayer = window.dataLayer || [];
+
+      window.dataLayer.push({
+        event: "add_shipping_info",
         ecommerce: {
-          items: items,
+          currency: "USD",
+          value,
           shipping_tier: shippingMethod,
+          items,
         },
       });
 
